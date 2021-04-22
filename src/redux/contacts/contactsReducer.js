@@ -12,16 +12,17 @@ const getInitialContactsFromLocalStorage = () => {
   }
 };
 
-const saveToLocalStorage = (previousContacts, updatedContacts) => {
-  if (updatedContacts !== previousContacts) {
-    localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-  }
-};
+// const saveToLocalStorage = (previousContacts, updatedContacts) => {
+//   if (updatedContacts !== previousContacts) {
+//     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+//   }
+// };
 
 const checkIfContactExists = (state, payload) => {
-  console.log('state in find', state);
-  console.log(payload);
-  const contactFound = state.find(contact => contact.name === payload.name);
+  const contactFound = state.find(
+    contact => contact.name.toLowerCase() === payload.name.toLowerCase(),
+  );
+  console.log(contactFound);
   if (contactFound !== undefined) {
     const notify = () =>
       toast.error(`${payload.name} is already in contacts`, {
@@ -50,7 +51,7 @@ const contacts = (
       if (checkIfContactExists(state, payload) === false) {
         return [...state, payload];
       }
-      break;
+      return [...state];
     }
 
     case types.DELETE:
