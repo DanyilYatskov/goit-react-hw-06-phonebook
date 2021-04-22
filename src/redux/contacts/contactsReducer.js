@@ -19,9 +19,9 @@ const saveToLocalStorage = (previousContacts, updatedContacts) => {
 };
 
 const checkIfContactExists = (state, payload) => {
-  const contactFound = state.contacts.find(
-    contact => contact.name === payload.name,
-  );
+  console.log('state in find', state);
+  console.log(payload);
+  const contactFound = state.find(contact => contact.name === payload.name);
   if (contactFound !== undefined) {
     const notify = () =>
       toast.error(`${payload.name} is already in contacts`, {

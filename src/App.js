@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 //import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { connect } from 'react-redux';
+import contactsActions from './redux/contacts/contactsActions';
 import Form from './components/Form';
 import Section from './components/Section/';
 import ContactsList from './components/ContactList/';
@@ -12,21 +13,20 @@ import Filter from './components/Filter/';
 class App extends Component {
   state = {
     contacts: [],
-    filter: '',
   };
 
-  onChangeFilter = event => {
-    this.setState({ filter: event.target.value });
-  };
+  // onChangeFilter = event => {
+  //   this.setState({ filter: event.target.value });
+  // };
 
-  getFilteredContacts = () => {
-    const { filter, contacts } = this.state;
-    const normalizedFilter = filter.toLowerCase();
+  // getFilteredContacts = () => {
+  //   const { filter, contacts } = this.state;
+  //   const normalizedFilter = filter.toLowerCase();
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter),
-    );
-  };
+  //   return contacts.filter(contact =>
+  //     contact.name.toLowerCase().includes(normalizedFilter),
+  //   );
+  // };
 
   // addContact = ({ name, number }) => {
   //   const newContact = {
@@ -80,8 +80,8 @@ class App extends Component {
   }
 
   render() {
-    const { contacts, filter } = this.state;
-    const filteredContacts = this.getFilteredContacts();
+    const { contacts } = this.props;
+    //const filteredContacts = this.getFilteredContacts();
     return (
       <div className="App">
         <Section title="Phonebook">
@@ -91,8 +91,8 @@ class App extends Component {
           <Section title="Contacts">
             <Filter />
             <ContactsList
-              contacts={filteredContacts}
-              onDeleteContact={this.deleteContact}
+              contacts={contacts}
+              onDeleteContact={this.props.onDeleteContact}
             />
           </Section>
         ) : (
@@ -104,4 +104,19 @@ class App extends Component {
   }
 }
 
-export default App;
+const getFilteredContacts = (contacts, contactsFilter) => {
+  const normalizedFilter = contactsFilter.toLowerCase();
+  return contacts.filter(contact =>
+    contact.name.toLowerCase().includes(normalizedFilter),
+  );
+};
+
+const mapStateToProps = ({ contacts: { contacts, contactsFilter } }) => ({
+  contacts: getFilteredContacts(contacts, contactsFilter),
+});
+
+const mapDispatchToProps = dispatch => ({
+  onDeleteContact: id => dispatch(contactsActions.deleteContact(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
