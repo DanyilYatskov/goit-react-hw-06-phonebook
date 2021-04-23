@@ -10,17 +10,17 @@ import Notification from './components/Notification/';
 import Filter from './components/Filter/';
 
 class App extends Component {
-  componentDidUpdate(prevProps, prevState) {
-    const updatedContacts = this.props.contacts;
-    const previousContacts = prevProps.contacts;
-    if (updatedContacts !== previousContacts) {
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   const updatedContacts = this.props.contacts;
+  //   const previousContacts = prevProps.contacts;
+  //   if (updatedContacts !== previousContacts) {
+  //     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+  //   }
+  // }
 
   render() {
     const { contacts } = this.props;
-    return (
+        return (
       <div className="App">
         <Section title="Phonebook">
           <Form />

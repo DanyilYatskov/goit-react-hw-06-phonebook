@@ -1,28 +1,12 @@
 import { combineReducers } from 'redux';
+import { createReducer } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import types from './contactsTypes';
-
-const getInitialContactsFromLocalStorage = () => {
-  const contacts = localStorage.getItem('contacts');
-  const parsedContacts = JSON.parse(contacts);
-  if (contacts) {
-    return parsedContacts;
-  } else {
-    return [];
-  }
-};
-
-// const saveToLocalStorage = (previousContacts, updatedContacts) => {
-//   if (updatedContacts !== previousContacts) {
-//     localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-//   }
-// };
+import actions from './contactsActions';
 
 const checkIfContactExists = (state, payload) => {
   const contactFound = state.find(
     contact => contact.name.toLowerCase() === payload.name.toLowerCase(),
   );
-  console.log(contactFound);
   if (contactFound !== undefined) {
     const notify = () =>
       toast.error(`${payload.name} is already in contacts`, {
@@ -40,37 +24,19 @@ const checkIfContactExists = (state, payload) => {
   return false;
 };
 
+const defaultContactsValue = [];
 const defaultFilterValue = '';
 
-const contacts = (
-  state = getInitialContactsFromLocalStorage(),
-  { type, payload },
-) => {
-  switch (type) {
-    case types.ADD: {
-      if (checkIfContactExists(state, payload) === false) {
-        return [...state, payload];
-      }
-      return [...state];
-    }
+const contacts = createReducer(defaultContactsValue, {
+  [actions.addContact]: (state, { payload }) =>
+    checkIfContactExists(state, payload) ? [...state] : [...state, payload],
+  [actions.deleteContact]: (state, actions) =>
+    state.filter(({ id }) => id !== actions.payload),
+});
 
-    case types.DELETE:
-      return state.filter(({ id }) => id !== payload);
-
-    default:
-      return state;
-  }
-};
-
-const contactsFilter = (state = defaultFilterValue, { type, payload }) => {
-  switch (type) {
-    case types.CHANGE_FILTER:
-      return payload;
-
-    default:
-      return state;
-  }
-};
+const contactsFilter = createReducer(defaultFilterValue, {
+  [actions.changeFilter]: (_, { payload }) => payload,
+});
 
 export default combineReducers({
   contacts,
